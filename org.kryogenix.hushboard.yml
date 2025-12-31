@@ -31,5 +31,6 @@ modules:
       - type: git
         url: https://github.com/stuartlangridge/hushboard.git
         commit: 5d62c2aacb876f7178d8002a22e44128ac312c98
-
+      - type: patch
+        path: fix_python_abi.patch
 
