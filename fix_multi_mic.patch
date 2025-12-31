@@ -1,0 +1,36 @@
+From 67cafc991fb4602c88cb32ed632c5db47f119e79 Mon Sep 17 00:00:00 2001
+From: Alex Murray <murray.alex@gmail.com>
+Date: Fri, 8 Jan 2021 12:23:37 +1030
+Subject: [PATCH] Only treat sources which are running as active
+
+This should allow to identify mics which are currently the active mic when
+multiple microphones are present
+---
+ hushboard/__main__.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+ mode change 100644 => 100755 hushboard/__main__.py
+
+diff --git a/hushboard/__main__.py b/hushboard/__main__.py
+old mode 100644
+new mode 100755
+index 38108d2..fec152a
+--- a/hushboard/__main__.py
++++ b/hushboard/__main__.py
+@@ -112,7 +112,7 @@ def print(self, *args):
+         if self.verbose: print(*args)
+ 
+     def mute(self):
+-        active_sources = [s for s in self.pulse.source_list() if s.port_active]
++        active_sources = [s for s in self.pulse.source_list() if s.state == pulsectl.PulseStateEnum['running']]
+         if not active_sources:
+             self.print("There are no active microphones, so not muting anything")
+         else:
+@@ -123,7 +123,7 @@ def mute(self):
+                 self.pulse.source_mute(m.index, 1)
+ 
+     def unmute(self):
+-        active_sources = [s for s in self.pulse.source_list() if s.port_active]
++        active_sources = [s for s in self.pulse.source_list() if s.state == pulsectl.PulseStateEnum['running']]
+         if not active_sources:
+             self.print("There are no active microphones, so not unmuting anything")
+         else:
