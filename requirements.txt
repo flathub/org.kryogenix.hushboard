@@ -1,0 +1,4 @@
+pycairo
+PyGObject
+six>=1.10.0
+python-xlib

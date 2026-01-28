@@ -1,0 +1,36 @@
+From b17b58cd00eb9af8184f8dcb010bbae7f9bc470c Mon Sep 17 00:00:00 2001
+From: Reuben Thomas <rrt@sc3d.org>
+Date: Sun, 29 Sep 2024 20:49:44 +0100
+Subject: [PATCH] =?UTF-8?q?Update=20use=20of=20=E2=80=98inspect=E2=80=99?=
+ =?UTF-8?q?=20module=20for=20Python=203.12?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The APIs now used exist in Python 3.6, so this doesn’t change the
+compatibility of the code overall.
+---
+ hushboard/pulsectl.py | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/hushboard/pulsectl.py b/hushboard/pulsectl.py
+index 4c79168..3b3dad0 100644
+--- a/hushboard/pulsectl.py
++++ b/hushboard/pulsectl.py
+@@ -593,12 +593,14 @@ def _wrapper(self, *args, **kws):
+ 				try: pulse_op(self._ctx, *(list(pulse_args) + [cb, None]))
+ 				except c.ArgumentError as err: raise TypeError(err.args)
+ 				except c.pa.CallError as err: raise PulseOperationInvalid(err.args[-1])
+-		func_args = list(inspect.getargspec(func or (lambda: None)))
++		func = func or (lambda: None)
++		func_args = list(inspect.getfullargspec(func))
+ 		func_args[0] = list(func_args[0])
+ 		if index_arg: func_args[0] = ['index'] + func_args[0]
+ 		_wrapper.__name__ = '...'
+-		_wrapper.__doc__ = 'Signature: func' + inspect.formatargspec(*func_args)
++		_wrapper.__doc__ = 'Signature: func' + str(inspect.signature(func))
+ 		if func.__doc__: _wrapper.__doc__ += '\n\n' + func.__doc__
++		print(_wrapper.__doc__)
+ 		return _wrapper
+ 
+ 	card_profile_set_by_index = _pulse_method_call(
